@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="標頭檔">
+      <UniqueIdentifier>{ec4205b3-247f-40f1-b133-ecee7d502280}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="來源檔案">
+      <UniqueIdentifier>{fad495d9-7e90-4448-a64c-cae9f4856c79}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Greedy.cpp">
+      <Filter>來源檔案</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Greedy.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
