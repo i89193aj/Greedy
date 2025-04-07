@@ -17,7 +17,7 @@ using namespace std;
 DLL_API Greedy GreedyInstance;
 enum LeetcodeExam {
     Leetcodexxx,
-
+    Leetcode45,
     None,
 };
 
@@ -73,11 +73,11 @@ if判斷式一定是一個start跟一個end去比較(這樣才會有交錯!)
 #pragma region 主程式(main)
 int main()
 {
-    LeetcodeExam ExamEnum = Leetcodexxx;                          //ChangeForExam
-    vector<int> LinkedlistInput1 = { 7,13,11,10,1 };              //ChangeForExam
-    vector<int> LinkedlistInput2 = { 7,13,11,10,1 };              //ChangeForExam
+    LeetcodeExam ExamEnum = Leetcode45;                         //ChangeForExam
+    vector<int> vInput1 = { 2,3,1,1,4 };                        //ChangeForExam
+    vector<int> vInput2 = { 7,13,11,10,1 };                     //ChangeForExam
     int iInput1 = 0; int iInput2 = 0;
-    vector<vector<int>> vInput1 = {{1,2} ,{2,3},{3,4},{1,3}};
+    vector<vector<int>> vvInput1 = {{1,2} ,{2,3},{3,4},{1,3}};
     
     int Ans = 0; vector<int> AnsVector; string AnsStr = "";
     string strinput1 = "bab";
@@ -89,8 +89,16 @@ int main()
     switch (ExamEnum)
     {
     case Leetcodexxx:
-        Ans = Implementation->Leetcode_Sol_435(vInput1, 1);
+        Ans = Implementation->Leetcode_Sol_435(vvInput1, 1);
         break;
+    case Leetcode45:
+        Ans = Implementation->Leetcode_Sol_45(vInput1, 1);
+        Ans = Implementation->Leetcode_Sol_45(vInput1, 2);
+        break;
+
+
+
+        
 
     default:
         break;
@@ -447,7 +455,7 @@ int Greedy::Leetcode_Sol_45(vector<int>& nums, int _solution) {
     switch (_solution)
     {
     case 1:
-        return Greedy_45(nums);
+        return Greedy_recordrealpos_45(nums);
     case 2:
         return Greedy_MySol_45(nums);
 
@@ -459,18 +467,16 @@ int Greedy::Leetcode_Sol_45(vector<int>& nums, int _solution) {
 }
 
 /*主要判別：選擇跳躍到下一個位置之間最大的跳躍位移!*/
-/*說明：
-跳到的位置一定是下一次要跳躍最大位移的位置，所以前面讓他去比較跳躍最大位移，只有在到達這次跳躍目標時，
-才要去知道這期間哪個"跳躍到下一個位置的位移最大"，然後選擇那個位置跳!*/
-int Greedy::Greedy_45(vector<int>& nums) {
-    int n = nums.size();
-    if (n == 1) return { 0 };  // 已在終點，不需要跳
-
+/*說明：這題不用紀錄位置，但如果能記錄位置，代表真的有搞懂(所以就改一下題目)
+        跳到的位置一定是下一次要跳躍最大位移的位置，所以前面讓他去比較跳躍最大位移，只有在到達這次跳躍目標時，
+        才要去知道這期間哪個"跳躍到下一個位置的位移最大"，然後選擇那個位置跳!*/
+int Greedy::Greedy_recordrealpos_45(vector<int>& nums) {
+    int lastpos = nums.size() - 1;
     int jumps = 0, farthest = 0, end = 0;
     int nextJump = 0;  // 記錄「最佳跳躍點」
-    vector<int> path = { 0 };  // 記錄跳躍路徑
+    vector<int> path;  // 記錄跳躍路徑
 
-    for (int i = 0; i < n - 1; i++) {
+    for (int i = 0; i < lastpos; i++) {
         if (i + nums[i] > farthest) {
             farthest = i + nums[i];  // 更新目前區間內最遠能到的位置
             nextJump = i;  // 記錄當前最佳的跳躍起點
@@ -481,14 +487,18 @@ int Greedy::Greedy_45(vector<int>& nums) {
             end = farthest;
             path.push_back(nextJump);  // 記錄跳躍點
 
-            if (end >= n - 1) {
-                path.push_back(n - 1);  // 最後一步直接到終點
+            if (end >= lastpos) {
+                path.push_back(lastpos);  // 最後一步直接到終點
                 break;
             }
         }
     }
     return jumps;
     //return path; //紀錄每個跳耀的位置(不一定只有一個解)
+
+    /*由於題目說test case一定能跳過到最後一個，所以在遍歷的過程中，
+      即使上一次跳躍會跳到0，但在中途就會更換可跳躍的最遠位置，
+      這樣就變相直接將上一次的跳躍縮小到不會跳進0，而且改跳到在這區間中最大的跳躍值*/
 }
 
 
@@ -515,6 +525,7 @@ int Greedy::Greedy_MySol_45(vector<int>& nums) {
 
         if (curMaxpos >= lastpos) {
             icount++;
+            jumppass.push_back(lastpos);
             break;
         }
     }
@@ -820,7 +831,7 @@ int Greedy::Leetcode_Sol_621(vector<int>& tasks,int n, int _solution) {
 /*主要判別：最頻繁的task優先做! (priority_queue + queue + Greedy)*/
 int Greedy::Greedy_simulation_cooldowntasks_621(vector<int>& tasks,int n) {
     unordered_map<char, int> maps;
-    int maxfreq = 0, times = 0;
+    int times = 0;
     for (int i = 0; i < tasks.size(); i++) {
         maps[tasks[i]]++;
     }
@@ -835,8 +846,8 @@ int Greedy::Greedy_simulation_cooldowntasks_621(vector<int>& tasks,int n) {
         if (!dotask.empty()) {
             int count_temp = dotask.top() - 1;
             dotask.pop();        //pop出來做事情
-            if (count_temp > 0) {//這個label還有事情做，那就先放回冷卻queue進行冷卻
-                cooldown.push({ count_temp,times + n });
+            if (count_temp > 0) {//這個label還有事情做，那就先放回冷卻queue進行冷卻(不是times + n + 1 的原因：當在times + n的時候會先做pop()的動作)
+                cooldown.push({ count_temp,times + n });    
             }
         }
         if (!cooldown.empty() && cooldown.front().second == times) { //到時的前一次把冷卻好的放回去，因為下一次準備換執行他的任務
